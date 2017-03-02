@@ -1,4 +1,4 @@
-# Infobip API PHP client
+# MiMSMS API PHP client
 
 ## Prerequisites
 
@@ -7,21 +7,21 @@
 
 ## Installation
 
-For using Infobip API PHP client, you have to add the following to your `composer.json` file:
+For using mimsms API PHP client, you have to add the following to your `composer.json` file:
 
 	"require": {
-		"infobip/infobip-api-php-client": "dev-master"
+		"mimsms/mimsms-api-php-client": "dev-master"
 	}
 
 and run `composer install` command inside the project's root folder.
 
 ## Running examples
 
-Before you start any of the examples, you have to populate specific data (sender address, receiver address, etc.) to `infobip/examples/examples.php` file.
+Before you start any of the examples, you have to populate specific data (sender address, receiver address, etc.) to `mimsms/examples/examples.php` file.
 
 Then, you should uncomment the example you want to test and run the PHP script with your **username** and **password** (in plain text) as arguments like the following:
 
-	php infobip/examples/examples.php YOUR_USERNAME YOUR_PASSWORD
+	php mimsms/examples/examples.php YOUR_USERNAME YOUR_PASSWORD
 
 ### Basic messaging example
 
@@ -29,13 +29,13 @@ The first thing that needs to be done is to include `autoload.php` and to initia
 
 	require_once '<PATH-TO-VENDOR-FOLDER>/autoload.php';
 
-    $client = new infobip\api\client\SendSingleTextualSms(new infobip\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
+    $client = new mimsms\api\client\SendSingleTextualSms(new mimsms\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
 
-You are basically logging in to Infobip, so an exception will be thrown if the username and/or password are incorrect. 
+You are basically logging in to mimsms, so an exception will be thrown if the username and/or password are incorrect. 
 
 The next step is to prepare the message:
 
-	$requestBody = new infobip\api\model\sms\mt\send\textual\SMSTextualRequest();
+	$requestBody = new mimsms\api\model\sms\mt\send\textual\SMSTextualRequest();
 	$requestBody->setFrom(FROM);
 	$requestBody->setTo(TO);
 	$requestBody->setText("This is an example message.");
@@ -48,26 +48,26 @@ Now you are ready to send the message:
 
 For sending SMS and expecting delivery report to be pushed to some notify URL, you have to initialize the messaging client:
 
-	$client = new infobip\api\client\SendMultipleTextualSmsAdvanced(new infobip\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
+	$client = new mimsms\api\client\SendMultipleTextualSmsAdvanced(new mimsms\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
 
 And prepare the advanced message:
 
-	$destination = new infobip\api\model\Destination();
+	$destination = new mimsms\api\model\Destination();
 	$destination->setTo(TO);
 
-	$message = new infobip\api\model\sms\mt\send\Message();
+	$message = new mimsms\api\model\sms\mt\send\Message();
 	$message->setFrom(FROM);
 	$message->setDestinations([$destination]);
 	$message->setText("This is an example message.");
 	$message->setNotifyUrl(NOTIFY_URL);
 
-	$requestBody = new infobip\api\model\sms\mt\send\textual\SMSAdvancedTextualRequest();
+	$requestBody = new mimsms\api\model\sms\mt\send\textual\SMSAdvancedTextualRequest();
 	$requestBody->setMessages([$message]);
 
 When the delivery notification is pushed to your server as a HTTP POST request, you could process body of the message with the following code:
 
 	$mapper = new JsonMapper();
-	$responseObject = $mapper->map(json_decode($responseBody), new infobip\api\model\sms\mt\reports\SMSReportResponse());
+	$responseObject = $mapper->map(json_decode($responseBody), new mimsms\api\model\sms\mt\reports\SMSReportResponse());
 
 	for ($i = 0; $i < count($responseObject->getResults()); ++$i) {
 		$result = $responseObject->getResults()[$i];
@@ -82,12 +82,12 @@ When the delivery notification is pushed to your server as a HTTP POST request, 
 
 If you want to send message with special characters, this is how you initialize the client and prepare your message:
 
-	$client = new infobip\api\client\SendMultipleTextualSmsAdvanced(new infobip\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
+	$client = new mimsms\api\client\SendMultipleTextualSmsAdvanced(new mimsms\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
 
-	$destination = new infobip\api\model\Destination();
+	$destination = new mimsms\api\model\Destination();
 	$destination->setTo(TO);
 
-	$language = new infobip\api\model\sms\mt\send\Language();
+	$language = new mimsms\api\model\sms\mt\send\Language();
 	//specific language code (TR stands for Turkish)
 	$language->setLanguageCode("TR");
 	//use single shift table for specific language ('false' or 'true')
@@ -95,13 +95,13 @@ If you want to send message with special characters, this is how you initialize 
 	//use locking shift table for specific language ('false' or 'true')
 	$language->setLockingShift(false);
 
-	$message = new infobip\api\model\sms\mt\send\Message();
+	$message = new mimsms\api\model\sms\mt\send\Message();
 	$message->setFrom(FROM);
 	$message->setDestinations([$destination]);
 	$message->setText("Artık Ulusal Dil Tanımlayıcısı ile Türkçe karakterli smslerinizi rahatlıkla iletebilirsiniz.");
 	$message->setLanguage($language);
 
-	$requestBody = new infobip\api\model\sms\mt\send\textual\SMSAdvancedTextualRequest();
+	$requestBody = new mimsms\api\model\sms\mt\send\textual\SMSAdvancedTextualRequest();
 	$requestBody->setMessages([$message]);
 
 Currently supported languages (with their language codes) are: `Spanish - "ES"`, `Portuguese - "PT"`, `Turkish - "TR"`.
@@ -110,11 +110,11 @@ Currently supported languages (with their language codes) are: `Spanish - "ES"`,
 
 Initialize the number context query client:
 
-    $client = new infobip\api\client\NumberContextQuery(new infobip\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
+    $client = new mimsms\api\client\NumberContextQuery(new mimsms\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
 
 Create request body:
 
-	$requestBody = new infobip\api\model\nc\query\NumberContextRequest();
+	$requestBody = new mimsms\api\model\nc\query\NumberContextRequest();
 	$requestBody->setTo(TO);
 
 Retrieve the number context:
@@ -132,9 +132,9 @@ Retrieve the number context:
 
 Similar to the previous example, but this time you must set the notification URL where the result will be pushed:
 
-	$client = new infobip\api\client\NumberContextNotify(new infobip\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
+	$client = new mimsms\api\client\NumberContextNotify(new mimsms\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
 
-	$requestBody = new infobip\api\model\nc\notify\NumberContextRequest();
+	$requestBody = new mimsms\api\model\nc\notify\NumberContextRequest();
 	$requestBody->setTo(TO);
 	$requestBody->setNotifyUrl(NOTIFY_URL);
 
@@ -143,7 +143,7 @@ Similar to the previous example, but this time you must set the notification URL
 When the number context notification is pushed to your server as a HTTP POST request, you could process the body of the message with the following code: 
 
 	$mapper = new JsonMapper();
-	$responseObject = $mapper->map(json_decode($responseBody), new infobip\api\model\nc\query\NumberContextResponse());
+	$responseObject = $mapper->map(json_decode($responseBody), new mimsms\api\model\nc\query\NumberContextResponse());
 
 	$numberContext = $responseObject->getResults()[0];
 	echo "Phone number: " . $numberContext->getTo() . "\n";
@@ -156,15 +156,15 @@ When the number context notification is pushed to your server as a HTTP POST req
 
 The client that has to be initialized is:
 
-	$client = new infobip\api\client\GetReceivedMessages(new infobip\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
+	$client = new mimsms\api\client\GetReceivedMessages(new mimsms\api\configuration\BasicAuthConfiguration(USERNAME, PASSWORD));
 
 Then you have to create execution context:
 
-	$context = new infobip\api\model\sms\mo\reports\GetReceivedMessagesExecuteContext;
+	$context = new mimsms\api\model\sms\mo\reports\GetReceivedMessagesExecuteContext;
 
 If you want to filter inbound messages, you can do it by setting the value to any of execute context class fields.
 
-The response type will be `\infobip\api\model\sms\mo\reports\MOReportResponse`:
+The response type will be `\mimsms\api\model\sms\mo\reports\MOReportResponse`:
 
     $response = $client->execute($context);
 
@@ -179,11 +179,11 @@ The response type will be `\infobip\api\model\sms\mo\reports\MOReportResponse`:
 
 ### Inbound message push example
 
-The subscription to receive inbound messages can be set up on [Infobip](https://www.infobip.com) platform.
+The subscription to receive inbound messages can be set up on [mimsms](https://www.mimsms.com) platform.
 When the inbound message notification is pushed to your server as a HTTP POST request, you could process body of the message with the following code:
 
 	$mapper = new JsonMapper();
-	$responseObject = $mapper->map(json_decode($responseBody), new infobip\api\model\sms\mo\reports\MOReportResponse());
+	$responseObject = $mapper->map(json_decode($responseBody), new mimsms\api\model\sms\mo\reports\MOReportResponse());
 
 	$result = $responseObject->getResults()[0];
 	echo "Message ID: " . $result->getMessageId() . "\n";
